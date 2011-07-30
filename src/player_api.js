@@ -6,39 +6,90 @@ if (!SV) {
     if (!SV.players) {
         SV.players = {};
     }
-
+    
     if (!SV.Player) {
         SV.Player = function(options) {
-            this.videoId = options.videoId;
-            this.events = options.events;
+            var _videoId = options.videoId;
+            var _volume = 1,_duration = 0,_currentTime = 0,_loaded = 0;
 
-            this.iframe = SV.utils.getIframeByVideoId(this.videoId);
+            var _sendMessage = function(message) {
+                _iframe.contentWindow.postMessage(message, 'http://videos.sproutvideo.com');
+            };
 
-            if (!this.iframe) {
+            var _getIframeByVideoId = function(id) {
+                var players = SV.utils.getElementsByClassName('sproutvideo-player');
+                var len = players.length;
+                for (var i = 0; i < len; i++) {
+                    if (players[i].src.indexOf(id)) {
+                        return players[i];
+                    }
+                }
+            };
+
+            var _iframe = _getIframeByVideoId(_videoId);
+
+            if (!_iframe) {
                 throw 'Can not find video iframe';
             }
 
-            SV.players[options.videoId] = this;
-            return this;
+            var public = {
+                events: options.events,
+
+                play: function() {
+                    _sendMessage('{"name":"play"}');
+                },
+                
+                pause: function() {
+                    _sendMessage('{"name":"pause"}');
+                },
+
+                setVolume: function(vol) {
+                    _sendMessage('{"name":"volume", "data":"' + vol + '"}');
+                },
+
+                getVolume: function() {
+                    return _volume;
+                },
+                
+                seek: function(loc) {
+                    _sendMessage('{"name":"seek", "data":"' + loc + '"}');
+                },
+
+                getCurrentTime: function() {
+                  return _currentTime;  
+                },
+
+                getPercentLoaded: function() {
+                  return _loaded;  
+                },
+
+                getDuration: function() {
+                  return _duration;  
+                },
+                
+                updateStatus: function(message) {
+                    switch(message.type){
+                        case 'volume': 
+                            _volume = message.data;
+                            break;
+                        case 'progress':
+                            _currentTime = message.data.time;
+                            break;
+                        case 'loading':
+                            _loaded = message.data;
+                            break;
+                        case 'ready':
+                            _duration = message.data.duration;
+                            break;
+                    }
+                }
+            };
+
+            SV.players[_videoId] = public;
+
+            return public;
         };
 
-        SV.Player.prototype = {
-            play: function() {
-                this.sendMessage('{"name":"play"}');
-            },
-            pause: function() {
-                this.sendMessage('{"name":"pause"}');
-            },
-            setVolume: function(vol) {
-                this.sendMessage('{"name":"volume", "data":"' + vol + '"}');
-            },
-            seek: function(loc) {
-                this.sendMessage('{"name":"seek", "data":"' + loc + '"}');
-            },
-            sendMessage: function(message) {
-                this.iframe.contentWindow.postMessage(message, 'http://videos.sproutvideo.com');
-            }
-        };
     }
 
     if (!SV.utils) {
@@ -59,16 +110,6 @@ if (!SV) {
                     }
                     return classElements;
                 }
-            },
-
-            getIframeByVideoId: function(id) {
-                var players = SV.utils.getElementsByClassName('sproutvideo-player');
-                var len = players.length;
-                for (var i = 0; i < len; i++) {
-                    if (players[i].src.indexOf(id)) {
-                        return players[i];
-                    }
-                }
             }
         };
     }
@@ -79,6 +120,7 @@ if (!SV) {
                 try {
                     var message = JSON.parse(e.data);
                     var player = SV.players[message.id];
+                    player.updateStatus(message);
                     if (player && player.events && player.events['onStatus']) {
                         player.events['onStatus'](message);
                     }
@@ -92,4 +134,5 @@ if (!SV) {
     } else {
         window.attachEvent('onmessage', SV.routePlayerEvent);
     }
+
 })();
