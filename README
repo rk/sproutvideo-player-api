@@ -1,0 +1,1 @@
+cat src/*.js | uglifyjs -o player_api.js -nc
