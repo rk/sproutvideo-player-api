@@ -3,11 +3,18 @@
     <head>
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
         <script type="text/javascript" src="http://c.sproutvideo.com/player_api.js"></script>
+        <script type="text/javascript" src="assets/prettify.js"></script>
         <link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/css/bootstrap-1.1.1.min.css">
+        <link rel="stylesheet" href="assets/prettify.css">
         <script type="text/javascript">
-        var player;
         $(document).ready(function(){
-            player = new SV.Player({
+            prettyPrint();
+            // create a new SV.Player instance for the video.
+            // videoID: the id of the video from which you want to receive events and control.
+            // event.onStatus: the event handler for the player. All events from the player 
+            //                 will call this function and pass in an object with the event
+            //                 data.
+            var player = new SV.Player({
                 videoId: 'e898d2b5111be3c860',
                 events: {
                     onStatus: function(e) {
@@ -21,6 +28,32 @@
                     }
                 }
             });
+            
+            //Bind events for the buttons.
+            $('#play').bind('click', function(e){
+                player.play();
+            });
+            $('#pause').bind('click', function(e){
+                player.pause();
+            });
+            $('#seek').bind('click', function(e){
+                player.seek(50);
+            });
+            $('#currentTime').bind('click', function(e){
+                alert(player.getCurrentTime());
+            });
+            $('#setVolume').bind('click', function(e){
+                player.setVolume(0.5);
+            });
+            $('#getVolume').bind('click', function(e){
+                alert(player.getVolume());
+            });
+            $('#loaded').bind('click', function(e){
+                alert(player.getPercentLoaded());
+            });
+            $('#duration').bind('click', function(e){
+                alert(player.getDuration());
+            });
         });
         </script>
         <title>SproutVideo Javascript Player API Example</title>
@@ -32,7 +65,9 @@
                     <h1>About</h1>
                 </div>
                 <div class="row">
-                    <div class="span16 columns">It's Awesome!</div>
+                    <div class="span16 columns">
+                        <p>The SproutVideo Javascript Player API provides a way to both receive events and control the SproutVideo Player. You can see an example below or checkout the documentation <a href="#">here</a>.</p>
+                    </div>
                 </div>
             </section>
             <section>
@@ -52,14 +87,14 @@
                 <div class="row">
                     <div class="span16 columns">
                         <div class="well">
-                            <button class="btn primary" onclick="player.play();">play()</button>
-                            <button class="btn primary" onclick="player.pause();">pause()</button>
-                            <button class="btn primary" onclick="player.seek(50);">seek(50)</button>
-                            <button class="btn primary" onclick="alert(player.getCurrentTime());">getCurrentTime()</button>
-                            <button class="btn primary" onclick="player.setVolume(.5);">setVolume(.5)</button>
-                            <button class="btn primary" onclick="alert(player.getVolume());">getVolume()</button>
-                            <button class="btn primary" onclick="alert(player.getPercentLoaded());">getPercentLoaded()</button>
-                            <button class="btn primary" onclick="alert(player.getDuration());">getDuration()</button>
+                            <button class="btn primary" id="play">play()</button>
+                            <button class="btn primary" id="pause">pause()</button>
+                            <button class="btn primary" id="seek">seek(50)</button>
+                            <button class="btn primary" id="currentTime">getCurrentTime()</button>
+                            <button class="btn primary" id="setVolume">setVolume(.5)</button>
+                            <button class="btn primary" id="getVolume">getVolume()</button>
+                            <button class="btn primary" id="loaded">getPercentLoaded()</button>
+                            <button class="btn primary" id="duartion">getDuration()</button>
                         </div>
                     </div>
                 </div>
@@ -116,6 +151,64 @@
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <div class="page-header">
+                    <h1>Code</h1>
+                </div>
+                <div class="row">
+                    <div class="span16 columns">
+<pre class="prettyprint linenums">
+$(document).ready(function(){
+    // create a new SV.Player instance for the video.
+    // videoID: the id of the video from which you want to receive events and control.
+    // event.onStatus: the event handler for the player. All events from the player 
+    //                 will call this function and pass in an object with the event
+    //                 data.    
+    var player = new SV.Player({
+        videoId: 'e898d2b5111be3c860',
+        events: {
+            onStatus: function(e) {
+                var count = parseInt($("#" + e.type +"_count").text());
+                $("#"+e.type+"_count").html(count + 1);
+                if (e.type == 'progress') {
+                    $("#"+e.type+"_data").html(e.data.time);
+                } else {
+                    $("#"+e.type+"_data").html(e.data);
+                }
+            }
+        }
+    });
+
+    //Bind events for the buttons.
+    $('#play').bind('click', function(e){
+        player.play();
+    });
+    $('#pause').bind('click', function(e){
+        player.pause();
+    });
+    $('#seek').bind('click', function(e){
+        player.seek(50);
+    });
+    $('#currentTime').bind('click', function(e){
+        alert(player.getCurrentTime());
+    });
+    $('#setVolume').bind('click', function(e){
+        player.setVolume(0.5);
+    });
+    $('#getVolume').bind('click', function(e){
+        alert(player.getVolume());
+    });
+    $('#loaded').bind('click', function(e){
+        alert(player.getPercentLoaded());
+    });
+    $('#duration').bind('click', function(e){
+        alert(player.getDuration());
+    });
+});
+</pre>
                     </div>
                 </div>
             </section>
