@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+        <script type="text/javascript" src="http://c.sproutvideo.com/player_api.js"></script>
+        <link rel="stylesheet" href="http://twitter.github.com/bootstrap/assets/css/bootstrap-1.1.1.min.css">
+        <script type="text/javascript">
+        var player;
+        $(document).ready(function(){
+            player = new SV.Player({
+                videoId: 'e898d2b5111be3c860',
+                events: {
+                    onStatus: function(e) {
+                        var count = parseInt($("#" + e.type +"_count").text());
+                        $("#"+e.type+"_count").html(count + 1);
+                        $("#"+e.type+"_data").html(e.data);
+                    }
+                }
+            });
+        });
+        </script>
+        <title>SproutVideo Javascript Player API Example</title>
+    </head>
+    <body>
+        <div class="container">
+            <section>
+                <div class="page-header">
+                    <h1>About</h1>
+                </div>
+                <div class="row">
+                    <div class="span16 columns">It's Awesome!</div>
+                </div>
+            </section>
+            <section>
+                <div class="page-header">
+                    <h1>Video</h1>
+                </div>
+                <div class="row">
+                    <div class="span16 columns">
+                        <iframe class='sproutvideo-player' type='text/html' src='http://videos.sproutvideo.com/embed/e898d2b5111be3c860/546cd1548010aaeb?type=sd' width='640' height='360' frameborder='0'></iframe>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <div class="page-header">
+                    <h1>Methods</h1>
+                </div>
+                <div class="row">
+                    <div class="span16 columns">
+                        <div class="well">
+                            <button class="btn primary" onclick="player.play();">play()</button>
+                            <button class="btn primary" onclick="player.pause();">pause()</button>
+                            <button class="btn primary" onclick="player.seek(50);">seek(50)</button>
+                            <button class="btn primary" onclick="alert(player.getCurrentTime());">getCurrentTime()</button>
+                            <button class="btn primary" onclick="player.setVolume(.5);">setVolume(.5)</button>
+                            <button class="btn primary" onclick="alert(player.getVolume());">getVolume()</button>
+                            <button class="btn primary" onclick="alert(player.getPercentLoaded());">getPercentLoaded()</button>
+                            <button class="btn primary" onclick="alert(player.getDuration());">getDuration()</button>
+                        </div>
+                    </div>
+                </div>
+             </section>   
+             <section>
+                 <div class="page-header">
+                     <h1>Events</h1>
+                </div>
+                <div class="row">
+                    <div class="span16 columns">
+                        <table width="600">
+                            <thead>
+                                <tr>
+                                    <th width="150"></th>
+                                    <th width="100">Count</th>
+                                    <th>Data</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th align="right" class="green">Ready Event</th>
+                                    <td align="right" id="ready_count">0</td>
+                                    <td align="center" id="ready_data"></td>
+                                </tr>
+                                <tr>
+                                    <th align="right" class="blue">Play Event</th>
+                                    <td align="right" id="play_count">0</td>
+                                    <td align="center" id="play_data"></td>
+                                </tr>
+                                <tr>
+                                    <th align="right" class="yellow">Pause Event</th>
+                                    <td align="right" id="pause_count">0</td>
+                                    <td align="center "id="pause_data"></td>
+                                </tr>
+                                <tr>
+                                    <th align="right" class="red">Loading Event</th>
+                                    <td align="right" id="loading_count">0</td>
+                                    <td align="center" id="loading_data"></td>
+                                </tr>
+                                <tr>
+                                    <th align="right" class="orange">Progress Event</th>
+                                    <td align="right" id="progress_count">0</td>
+                                    <td align="center" id="progress_data"></td>
+                                </tr>
+                                <tr>
+                                    <th align="right" class="purple">Completed Event</th>
+                                    <td align="right" id="completed_count">0</td>
+                                    <td align="center" id="completed_data"></td>
+                                </tr>
+                                <tr>
+                                    <th align="right">Volume Event</th>
+                                    <td align="right" id="volume_count">0</td>
+                                    <td align="center" id="volume_data"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </body>
+</html>
