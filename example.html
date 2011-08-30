@@ -13,7 +13,11 @@
                     onStatus: function(e) {
                         var count = parseInt($("#" + e.type +"_count").text());
                         $("#"+e.type+"_count").html(count + 1);
-                        $("#"+e.type+"_data").html(e.data);
+                        if (e.type == 'progress') {
+                            $("#"+e.type+"_data").html(e.data.time);
+                        } else {
+                            $("#"+e.type+"_data").html(e.data);
+                        }
                     }
                 }
             });
