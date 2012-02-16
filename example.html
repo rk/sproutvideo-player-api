@@ -39,6 +39,9 @@
             $('#seek').bind('click', function(e){
                 player.seek(50);
             });
+            $('#toggleHD').bind('click', function(e){
+               player.toggleHD(); 
+            });
             $('#currentTime').bind('click', function(e){
                 alert(player.getCurrentTime());
             });
@@ -93,6 +96,7 @@
                             <button class="btn  btn-primary" id="play">play()</button>
                             <button class="btn  btn-primary" id="pause">pause()</button>
                             <button class="btn  btn-primary" id="seek">seek(50)</button>
+                            <button class="btn  btn-primary" id="toggleHD">toggleHD()</button>
                             <button class="btn  btn-primary" id="currentTime">getCurrentTime()</button>
                             <button class="btn  btn-primary" id="setVolume">setVolume(.5)</button>
                             <button class="btn  btn-primary" id="getVolume">getVolume()</button>
@@ -194,6 +198,9 @@ $(document).ready(function(){
     });
     $('#seek').bind('click', function(e){
         player.seek(50);
+    });
+    $('#toggleHD').bind('click', function(e){
+        player.toggleHD(); 
     });
     $('#currentTime').bind('click', function(e){
         alert(player.getCurrentTime());
