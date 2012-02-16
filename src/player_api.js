@@ -55,6 +55,10 @@ if (!SV) {
                     _sendMessage('{"name":"seek", "data":"' + loc + '"}');
                 },
 
+                toggleHD: function() {
+                    _sendMessage('{"name":"toggleHD"}');
+                },
+
                 getCurrentTime: function() {
                   return _currentTime;  
                 },
