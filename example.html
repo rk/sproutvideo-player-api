@@ -57,6 +57,9 @@
             $('#duration').bind('click', function(e){
                 alert(player.getDuration());
             });
+            $('#email').bind('click', function(e){
+                alert(player.getEmail());
+            });
         });
         </script>
         <title>SproutVideo Javascript Player API Example</title>
@@ -101,7 +104,8 @@
                             <button class="btn  btn-primary" id="setVolume">setVolume(.5)</button>
                             <button class="btn  btn-primary" id="getVolume">getVolume()</button>
                             <button class="btn  btn-primary" id="loaded">getPercentLoaded()</button>
-                            <button class="btn  btn-primary" id="duration">getDuration()</button>
+                            <button class="btn  btn-primary" id="duration">getDuration()</button><br/><br/>
+                            <button class="btn  btn-primary" id="email">getEmail()</button>
                         </div>
                     </div>
                 </div>
@@ -216,6 +220,9 @@ $(document).ready(function(){
     });
     $('#duration').bind('click', function(e){
         alert(player.getDuration());
+    });
+    $('#email').bind('click', function(e){
+        alert(player.getEmail());
     });
 });
 </pre>
