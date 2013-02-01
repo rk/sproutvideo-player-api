@@ -10,7 +10,7 @@ if (!SV) {
     if (!SV.Player) {
         SV.Player = function(options) {
             var _videoId = options.videoId;
-            var _volume = 1,_duration = 0,_currentTime = 0,_loaded = 0;
+            var _volume = 1,_duration = 0,_currentTime = 0,_loaded = 0,_email = null;
 
             var _sendMessage = function(message) {
                 _iframe.contentWindow.postMessage(message, 'http://videos.sproutvideo.com');
@@ -70,6 +70,10 @@ if (!SV) {
                 getDuration: function() {
                   return _duration;  
                 },
+
+                getEmail: function() {
+                    return _email;
+                },
                 
                 updateStatus: function(message) {
                     switch(message.type){
@@ -84,6 +88,7 @@ if (!SV) {
                             break;
                         case 'ready':
                             _duration = message.data.duration;
+                            _email = message.data.email;
                             break;
                     }
                 }
