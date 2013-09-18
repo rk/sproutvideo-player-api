@@ -18,6 +18,8 @@ if (!SV) {
 
             var _getIframeByVideoId = function(id) {
                 var players = SV.utils.getElementsByClassName('sproutvideo-player');
+                var playlists = SV.utils.getElementsByClassName('sproutvideo-playlist');
+                players = [].slice.call(players).concat([].slice.call(playlists));
                 var len = players.length;
                 for (var i = 0; i < len; i++) {
                     if (players[i].src.indexOf(id)) {
@@ -35,8 +37,12 @@ if (!SV) {
             var public = {
                 events: options.events,
 
-                play: function() {
-                    _sendMessage('{"name":"play"}');
+                play: function(index) {
+                    if (typeof index != 'undefined') {
+                        _sendMessage('{"name":"playVideo", "data":"' + index + '"}');
+                    } else {
+                        _sendMessage('{"name":"play"}');
+                    }
                 },
                 
                 pause: function() {
