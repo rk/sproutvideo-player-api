@@ -10,25 +10,24 @@ if (!SV) {
     if (!SV.Player) {
         SV.Player = function(options) {
             var _videoId = options.videoId;
-            var _volume = 1,_duration = 0,_currentTime = 0,_loaded = 0,_email = null;
+            var _playlistId = options.playlistId;
+            var _volume = 1,_duration = 0,_currentTime = 0,_loaded = 0,_email = null,_listeners={};
 
             var _sendMessage = function(message) {
                 _iframe.contentWindow.postMessage(message, 'http://videos.sproutvideo.com');
             };
 
-            var _getIframeByVideoId = function(id) {
-                var players = SV.utils.getElementsByClassName('sproutvideo-player');
-                var playlists = SV.utils.getElementsByClassName('sproutvideo-playlist');
-                players = [].slice.call(players).concat([].slice.call(playlists));
-                var len = players.length;
-                for (var i = 0; i < len; i++) {
+            var _getIframeByVideoId = function(id, type) {
+                var className = type == 'video' ? 'sproutvideo-player' : 'sproutvideo-playlist';
+                var players = SV.utils.getElementsByClassName(className);
+                for (var i = 0; i < players.length; i++) {
                     if (players[i].src.indexOf(id)) {
                         return players[i];
                     }
                 }
             };
 
-            var _iframe = _getIframeByVideoId(_videoId);
+            var _iframe = _getIframeByVideoId(_videoId||_playlistId);
 
             if (!_iframe) {
                 throw 'Can not find video iframe';
@@ -97,10 +96,48 @@ if (!SV) {
                             _email = message.data.email;
                             break;
                     }
+                },
+
+                bind: function(type, listener) {
+                    if(typeof _listeners[type] == 'undefined') {
+                        _listeners[type] = [];
+                    }
+                    _listeners[type].push(listener);
+                },
+
+                fire: function(event) {
+                    if (typeof event == 'string') {
+                        event = {type: event};
+                    }
+                    if (!event.target) {
+                        event.target = this;
+                    }
+                    if (_listeners[event.type] instanceof Array){
+                        var listeners = _listeners[event.type];
+                        for (var i=0, len=listeners.length; i < len; i++){                          
+                            var returnValue = listeners[i].call(this, event);
+                            if(returnValue == this.unbind) {
+                                this.unbind(event.type, listeners[i]);
+                            }
+                        }
+                    }
+                },
+
+                unbind: function(type, listener) {
+                    if (_listeners[type] instanceof Array){
+                        var listeners = _listeners[type];
+                        for (var i=0, len=listeners.length; i < len; i++){
+                            if (listeners[i] === listener){
+                                listeners.splice(i, 1);
+                                break;
+                            }
+                        }
+                    }
                 }
+
             };
 
-            SV.players[_videoId] = public;
+            SV.players[_videoId||_playlistId] = public;
 
             return public;
         };
@@ -136,6 +173,7 @@ if (!SV) {
                     var message = JSON.parse(e.data);
                     var player = SV.players[message.id];
                     player.updateStatus(message);
+                    player.fire({type: message.type, data: message.data});
                     if (player && player.events && player.events['onStatus']) {
                         player.events['onStatus'](message);
                     }
