@@ -167,26 +167,11 @@
                     <div class="span12 columns">
 <pre class="prettyprint linenums">
 $(document).ready(function(){
+    prettyPrint();
     // create a new SV.Player instance for the video.
     // videoID: the id of the video from which you want to receive events and control.
-    // event.onStatus: the event handler for the player. All events from the player 
-    //                 will call this function and pass in an object with the event
-    //                 data.    
-    var player = new SV.Player({
-        videoId: 'e898d2b5111be3c860',
-        events: {
-            onStatus: function(e) {
-                var count = parseInt($("#" + e.type +"_count").text());
-                $("#"+e.type+"_count").html(count + 1);
-                if (e.type == 'progress') {
-                    $("#"+e.type+"_data").html(e.data.time);
-                } else {
-                    $("#"+e.type+"_data").html(e.data);
-                }
-            }
-        }
-    });
-
+    var player = new SV.Player({videoId: 'e898d2b5111be3c860'});
+    
     //Bind events for the buttons.
     $('#play').bind('click', function(e){
         player.play();
@@ -198,7 +183,7 @@ $(document).ready(function(){
         player.seek(50);
     });
     $('#toggleHD').bind('click', function(e){
-        player.toggleHD(); 
+       player.toggleHD(); 
     });
     $('#currentTime').bind('click', function(e){
         alert(player.getCurrentTime());
@@ -218,6 +203,16 @@ $(document).ready(function(){
     $('#email').bind('click', function(e){
         alert(player.getEmail());
     });
+
+    var events = ['ready', 'play', 'pause', 'loading', 'progress', 'completed', 'volume'];
+
+    for (var i = 0; i < events.length; i++) {
+        player.bind(events[i], function(e) {
+            var count = parseInt($('#' + e.type + '_count').text());
+            $('#' + e.type + '_count').html(count + 1);
+            $('#' + e.type + '_data').html(JSON.stringify(e.data));
+        });
+    }
 });
 </pre>
                     </div>
