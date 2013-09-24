@@ -167,7 +167,6 @@
                     <div class="span12 columns">
 <pre class="prettyprint linenums">
 $(document).ready(function(){
-    prettyPrint();
     // create a new SV.Player instance for the video.
     // videoID: the id of the video from which you want to receive events and control.
     var player = new SV.Player({videoId: 'e898d2b5111be3c860'});
@@ -204,8 +203,10 @@ $(document).ready(function(){
         alert(player.getEmail());
     });
 
+    // Available events
     var events = ['ready', 'play', 'pause', 'loading', 'progress', 'completed', 'volume'];
 
+    // Bind all events
     for (var i = 0; i < events.length; i++) {
         player.bind(events[i], function(e) {
             var count = parseInt($('#' + e.type + '_count').text());
