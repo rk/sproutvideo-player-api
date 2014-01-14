@@ -27,7 +27,7 @@ if (!SV) {
                 }
             };
 
-            var _iframe = _getIframeByVideoId(_videoId||_playlistId);
+            var _iframe = _getIframeByVideoId(_videoId||_playlistId, !!_videoId ? 'video' : 'playlist');
 
             if (!_iframe) {
                 throw 'Can not find video iframe';
