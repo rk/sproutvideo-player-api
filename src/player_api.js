@@ -21,7 +21,7 @@ if (!SV) {
                 var className = type == 'video' ? 'sproutvideo-player' : 'sproutvideo-playlist';
                 var players = SV.utils.getElementsByClassName(className);
                 for (var i = 0; i < players.length; i++) {
-                    if (players[i].src.indexOf(id)) {
+                    if (players[i].src.indexOf(id) > -1) {
                         return players[i];
                     }
                 }
