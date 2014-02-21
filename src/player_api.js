@@ -14,7 +14,7 @@ if (!SV) {
             var _volume = 1,_duration = 0,_currentTime = 0,_loaded = 0,_email = null,_listeners={};
 
             var _sendMessage = function(message) {
-                _iframe.contentWindow.postMessage(message, 'http://videos.sproutvideo.com');
+                _iframe.contentWindow.postMessage(message, window.location.protocol + '//videos.sproutvideo.com');
             };
 
             var _getIframeByVideoId = function(id, type) {
