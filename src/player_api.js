@@ -154,7 +154,6 @@ if (!SV) {
 
             SV.players[_videoId||_playlistId] = this;
         };
-
     }
 
     if (!SV.utils) {
@@ -167,7 +166,7 @@ if (!SV) {
                     var els = document.getElementsByTagName('*');
                     var elsLen = els.length;
                     var pattern = new RegExp("(^|\\s)" + classname + "(\\s|$)");
-                    for (i = 0, j = 0; i < elsLen; i++) {
+                    for (var i = 0, j = 0; i < elsLen; i++) {
                         if (pattern.test(els[i].className)) {
                             classElements[j] = els[i];
                             j++;
