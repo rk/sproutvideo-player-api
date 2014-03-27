@@ -2,16 +2,16 @@ var SV;
 if (!SV) {
     SV = {};
 }
- (function() {
+(function() {
     if (!SV.players) {
         SV.players = {};
     }
-    
+
     if (!SV.Player) {
         SV.Player = function(options) {
             var _videoId = options.videoId;
             var _playlistId = options.playlistId;
-            var _volume = 1,_duration = 0,_currentTime = 0,_loaded = 0,_email = null,_listeners={};
+            var _volume = 1,_duration = 0,_currentTime = 0,_loaded = 0,_email = null,_playing = false,_listeners={};
 
             var _sendMessage = function(message) {
                 _iframe.contentWindow.postMessage(message, window.location.protocol + '//videos.sproutvideo.com');
@@ -43,7 +43,7 @@ if (!SV) {
                         _sendMessage('{"name":"play"}');
                     }
                 },
-                
+
                 pause: function() {
                     _sendMessage('{"name":"pause"}');
                 },
@@ -55,7 +55,7 @@ if (!SV) {
                 getVolume: function() {
                     return _volume;
                 },
-                
+
                 seek: function(loc) {
                     _sendMessage('{"name":"seek", "data":"' + loc + '"}');
                 },
@@ -65,24 +65,28 @@ if (!SV) {
                 },
 
                 getCurrentTime: function() {
-                  return _currentTime;  
+                  return _currentTime;
                 },
 
                 getPercentLoaded: function() {
-                  return _loaded;  
+                  return _loaded;
                 },
 
                 getDuration: function() {
-                  return _duration;  
+                  return _duration;
                 },
 
                 getEmail: function() {
                     return _email;
                 },
-                
+
+                getPlaying: function () {
+                    return _playing;
+                },
+
                 updateStatus: function(message) {
                     switch(message.type){
-                        case 'volume': 
+                        case 'volume':
                             _volume = message.data;
                             break;
                         case 'progress':
@@ -94,6 +98,13 @@ if (!SV) {
                         case 'ready':
                             _duration = message.data.duration;
                             _email = message.data.email;
+                            break;
+                        case 'play':
+                        case 'playVideo':
+                            _playing = true;
+                            break;
+                        case 'pause':
+                            _playing = false;
                             break;
                     }
                 },
@@ -114,7 +125,7 @@ if (!SV) {
                     }
                     if (_listeners[event.type] instanceof Array){
                         var listeners = _listeners[event.type];
-                        for (var i=0, len=listeners.length; i < len; i++){                          
+                        for (var i=0, len=listeners.length; i < len; i++){
                             var returnValue = listeners[i].call(this, event);
                             if(returnValue == this.unbind) {
                                 this.unbind(event.type, listeners[i]);
@@ -181,7 +192,7 @@ if (!SV) {
             }
         }
     }
-    
+
     if (window.addEventListener) {
         window.addEventListener('message', SV.routePlayerEvent, false);
     } else {
