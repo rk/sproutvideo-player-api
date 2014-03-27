@@ -171,13 +171,11 @@ if (!SV) {
                 } else {
                     var classElements = [];
                     var els = document.getElementsByTagName('*');
-                    var elsLen = els.length;
                     var pattern = new RegExp("(^|\\s)" + classname + "(\\s|$)");
 
-                    for (var i = 0, j = 0; i < elsLen; i++) {
+                    for (var i = 0, elsLen = els.length; i < elsLen; i++) {
                         if (pattern.test(els[i].className)) {
-                            classElements[j] = els[i];
-                            j++;
+                            classElements.push(els[i]);
                         }
                     }
 
