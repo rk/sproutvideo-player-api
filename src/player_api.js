@@ -23,23 +23,13 @@ if (!SV) {
                 _iframe.contentWindow.postMessage(message, window.location.protocol + '//videos.sproutvideo.com');
             };
 
-            var _getIframeByVideoId = function(id, type) {
-                var className = type == 'video' ? 'sproutvideo-player' : 'sproutvideo-playlist';
-                var players = SV.utils.getElementsByClassName(className);
-                for (var i = 0; i < players.length; i++) {
-                    if (players[i].src.indexOf(id) > -1) {
-                        return players[i];
-                    }
-                }
-            };
-
-            var _iframe = _getIframeByVideoId(_videoId||_playlistId, !!_videoId ? 'video' : 'playlist');
+            var _iframe = SV.utils.getIframeByVideoId(_videoId || _playlistId, !!_videoId ? 'video' : 'playlist');
 
             if (!_iframe) {
                 throw 'Can not find video iframe';
             }
 
-            this.events = options.events;
+            this.events = options.events || {};
 
             this.play = function(index) {
                 if (typeof index !== 'undefined') {
@@ -104,6 +94,18 @@ if (!SV) {
                         _duration = message.data.duration;
                         _email = message.data.email;
                         break;
+                }
+
+                this.fire(message);
+
+                if (typeof this.events['onStatus'] === 'function') {
+                    this.events['onStatus'].call(this, message);
+                }
+
+                // Update playing state after executing callbacks, in case they depend on knowledge of the state prior
+                // to the update. Such as if the pause handler wants to execute something only when initially paused.
+                // Currently, the pause event can fire when the video is paused by seeks to another position.
+                switch (message.type) {
                     case 'play':
                     case 'playVideo':
                         _playing = true;
@@ -113,18 +115,13 @@ if (!SV) {
                         _playing = false;
                         break;
                 }
-
-                this.fire(message);
-
-                if (this.events && this.events['onStatus']) {
-                    this.events['onStatus'](message);
-                }
             };
 
             this.bind = function(type, listener) {
                 if (typeof _listeners[type] === 'undefined') {
                     _listeners[type] = [];
                 }
+
                 _listeners[type].push(listener);
             };
 
@@ -132,11 +129,14 @@ if (!SV) {
                 if (typeof event === 'string') {
                     event = {type: event};
                 }
+
                 if (!event.target) {
                     event.target = this;
                 }
+
                 if (_listeners[event.type] instanceof Array){
                     var listeners = _listeners[event.type];
+
                     for (var i=0, len=listeners.length; i < len; i++) {
                         var returnValue = listeners[i].call(this, event);
                         if (returnValue === this.unbind) {
@@ -149,6 +149,7 @@ if (!SV) {
             this.unbind = function(type, listener) {
                 if (_listeners[type] instanceof Array){
                     var listeners = _listeners[type];
+
                     for (var i=0, len=listeners.length; i < len; i++) {
                         if (listeners[i] === listener) {
                             listeners.splice(i, 1);
@@ -158,7 +159,7 @@ if (!SV) {
                 }
             };
 
-            SV.players[_videoId||_playlistId] = this;
+            SV.players[_videoId || _playlistId] = this;
         };
     }
 
@@ -172,13 +173,26 @@ if (!SV) {
                     var els = document.getElementsByTagName('*');
                     var elsLen = els.length;
                     var pattern = new RegExp("(^|\\s)" + classname + "(\\s|$)");
+
                     for (var i = 0, j = 0; i < elsLen; i++) {
                         if (pattern.test(els[i].className)) {
                             classElements[j] = els[i];
                             j++;
                         }
                     }
+
                     return classElements;
+                }
+            },
+
+            getIframeByVideoId: function(id, type) {
+                var className = type == 'video' ? 'sproutvideo-player' : 'sproutvideo-playlist';
+                var players = SV.utils.getElementsByClassName(className);
+
+                for (var i = 0; i < players.length; i++) {
+                    if (players[i].src.indexOf(id) > -1) {
+                        return players[i];
+                    }
                 }
             }
         };
