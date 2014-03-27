@@ -113,6 +113,12 @@ if (!SV) {
                         _playing = false;
                         break;
                 }
+
+                this.fire(message);
+
+                if (this.events && this.events['onStatus']) {
+                    this.events['onStatus'](message);
+                }
             };
 
             this.bind = function(type, listener) {
@@ -183,12 +189,7 @@ if (!SV) {
             if (e.origin.split('//')[1] == 'videos.sproutvideo.com') {
                 try {
                     var message = JSON.parse(e.data);
-                    var player = SV.players[message.id];
-                    player.updateStatus(message);
-                    player.fire({type: message.type, data: message.data});
-                    if (player && player.events && player.events['onStatus']) {
-                        player.events['onStatus'](message);
-                    }
+                    SV.players[message.id].updateStatus(message);
                 } catch(e) {}
             }
         }
